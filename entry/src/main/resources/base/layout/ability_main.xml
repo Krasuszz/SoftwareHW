@@ -39,7 +39,7 @@
             ohos:background_element="$graphic:button_bg"
             ohos:left_margin="8vp"
             ohos:text="发送"
-            ohos:text_color="white"
+            ohos:text_color="#fff"
             ohos:text_size="15fp"/>
 
     </DirectionalLayout>

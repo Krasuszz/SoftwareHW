@@ -1,5 +1,6 @@
 package com.example.softwarehw.slice;
 
+import com.example.softwarehw.MainAbility;
 import com.example.softwarehw.ResourceTable;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
@@ -13,7 +14,6 @@ import ohos.agp.components.element.ShapeElement;
 import ohos.agp.utils.Color;
 import ohos.agp.window.dialog.ToastDialog;
 
-import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,7 +70,7 @@ public class LoginAbilitySlice extends AbilitySlice {
                 upwd = txt_pwd.getText().trim();
             }
 
-            if ("admin".equals(uname) && "123456".equals(upwd)) {
+            if ("admin".equals(uname) && "12345".equals(upwd)) {
                 ToastDialog toastDialog = new ToastDialog(this);
                 toastDialog.setText("登录成功");
                 toastDialog.show();
@@ -113,7 +113,7 @@ public class LoginAbilitySlice extends AbilitySlice {
         Intent mIntent = new Intent();
         Operation operation = new Intent.OperationBuilder()
                 .withBundleName(getBundleName())
-                .withAbilityName("com.example.softwarehw.MainAbility")
+                .withAbilityName(MainAbility.class)
                 .build();
         mIntent.setOperation(operation);
         startAbility(mIntent);

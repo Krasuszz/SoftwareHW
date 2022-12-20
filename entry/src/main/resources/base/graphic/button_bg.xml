@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<state-container
+    xmlns:ohos="http://schemas.huawei.com/res/ohos">
+
+    <item
+        ohos:state="component_state_disabled"
+        ohos:element="$graphic:button_disabled_bg"/>
+
+    <item
+        ohos:state="component_state_empty"
+        ohos:element="$graphic:button_enable_bg"/>
+
+</state-container>

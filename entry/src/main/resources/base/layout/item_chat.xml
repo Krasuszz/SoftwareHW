@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:orientation="vertical">
+
+    <Component
+        ohos:id="$+id:component_item_chat_divider"
+        ohos:height="5vp"
+        ohos:width="match_parent"/>
+
+    <DirectionalLayout
+        ohos:id="$+id:dl_item_chat_left"
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="top"
+        ohos:left_margin="5vp"
+        ohos:orientation="horizontal"
+        ohos:padding="7vp">
+
+        <Image
+            ohos:id="$+id:image_item_chat_left_pic"
+            ohos:height="40vp"
+            ohos:width="40vp"
+            ohos:image_src="$media:icon_pic1"
+            ohos:scale_mode="stretch"/>
+
+        <Text
+            ohos:id="$+id:text_item_chat_left_content"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:background_element="$graphic:text_left_bg"
+            ohos:left_margin="7vp"
+            ohos:multiple_lines="true"
+            ohos:padding="10vp"
+            ohos:right_margin="50vp"
+            ohos:text="Hello 你好呀,Hello "
+            ohos:text_color="#000"
+            ohos:text_size="15fp"/>
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:id="$+id:dl_item_chat_right"
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="top|right"
+        ohos:left_margin="5vp"
+        ohos:orientation="horizontal"
+        ohos:padding="7vp">
+
+        <Text
+            ohos:id="$+id:text_item_chat_right_content"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:background_element="$graphic:text_right_bg"
+            ohos:left_margin="50vp"
+            ohos:multiple_lines="true"
+            ohos:padding="10vp"
+            ohos:right_margin="7vp"
+            ohos:text="Hello 你好呀"
+            ohos:text_color="#fff"
+            ohos:text_size="15fp"/>
+
+        <Image
+            ohos:id="$+id:image_item_chat_right_pic"
+            ohos:height="40vp"
+            ohos:width="40vp"
+            ohos:image_src="$media:icon_pic1"
+            ohos:scale_mode="stretch"/>
+    </DirectionalLayout>
+
+</DirectionalLayout>

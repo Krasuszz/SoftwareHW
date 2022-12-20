@@ -1,4 +1,4 @@
-package bean;
+package com.example.softwarehw.bean;
 
 /**
  * 聊天数据
@@ -24,7 +24,7 @@ public class ChatDataBean {
         super();
     }
 
-    public ChatDataBean(String sender,int picIndex,String content) {
+    public ChatDataBean(String sender, int picIndex, String content) {
         this.sender = sender;
         this.content = content;
         this.picIndex = picIndex;
