@@ -1,0 +1,79 @@
+{
+  "app": {
+    "bundleName": "com.example.softwarehw",
+    "vendor": "example",
+    "version": {
+      "code": 1000000,
+      "name": "1.0.0"
+    }
+  },
+  "deviceConfig": {
+  },
+  "module": {
+    "package": "com.example.softwarehw",
+    "name": ".MyApplication",
+    "mainAbility": "com.example.softwarehw.MainAbility",
+    "deviceType": [
+      "phone"
+    ],
+    "distro": {
+      "deliveryWithInstall": true,
+      "moduleName": "entry",
+      "moduleType": "entry",
+      "installationFree": false
+    },
+    "reqPermissions": [
+      {
+        "reason": "多设备协同",
+        "name": "ohos.permission.DISTRIBUTED_DATASYNC",
+        "usedScene": {
+          "ability": [
+            "MainAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.DISTRIBUTED_DEVICE_STATE_CHANGE"
+      },
+      {
+        "name": "ohos.permission.GET_DISTRIBUTED_DEVICE_INFO"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO"
+      }
+    ],
+    "abilities": [
+      {
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ],
+        "name": "com.example.softwarehw.LoginAbility",
+        "description": "$string:loginability_description",
+        "icon": "$media:icon",
+        "label": "$string:entry_LoginAbility",
+        "launchType": "standard",
+        "orientation": "unspecified",
+        "visible": true,
+        "type": "page"
+      },
+      {
+        "name": "com.example.softwarehw.MainAbility",
+        "description": "$string:mainability_description",
+        "icon": "$media:icon",
+        "label": "$string:entry_MainAbility",
+        "launchType": "standard",
+        "orientation": "unspecified",
+        "visible": true,
+        "type": "page"
+      }
+    ]
+  }
+}
