@@ -1,4 +1,6 @@
 package com.example.softwarehw.bean;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * 聊天数据
@@ -11,21 +13,26 @@ public class ChatDataBean {
     // 头像索引
     private int picIndex;
 
-    // 用户密码
-    private String password;
 
-    // 账号
-    private int account;
-
-    //用户名
-    private String user_name;
+    // 发送用户
+    private String send_account;
+    // 接收用户
+    private String receive_account;
+    // 日期
+    private LocalDate date;
+    // 时间
+    private LocalTime time;
 
     public ChatDataBean() {
         super();
     }
 
-    public ChatDataBean(String sender, int picIndex, String content) {
+    public ChatDataBean(String sender, String send_account, String receive_account, LocalDate date, LocalTime time, int picIndex, String content) {
         this.sender = sender;
+        this.send_account = send_account;
+        this.receive_account = receive_account;
+        this.date = date;
+        this.time = time;
         this.content = content;
         this.picIndex = picIndex;
     }
@@ -54,4 +61,21 @@ public class ChatDataBean {
     public void setPicIndex(int picIndex) {
         this.picIndex = picIndex;
     }
+
+    public String getSend_account() {
+        return send_account;
+    }
+
+    public String getReceive_account() {
+        return receive_account;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
 }

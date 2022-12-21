@@ -3,19 +3,28 @@ package com.example.softwarehw.slice;
 import com.example.softwarehw.ResourceTable;
 import com.example.softwarehw.bean.ChatDataBean;
 import com.example.softwarehw.provider.ChatProvider;
+import com.example.softwarehw.util.SensitiveWordFilter;
 import com.example.softwarehw.util.Tools;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.Button;
+import ohos.agp.components.Component;
 import ohos.agp.components.ListContainer;
 import ohos.agp.components.TextField;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.distributed.common.*;
 import ohos.data.distributed.user.SingleKvStore;
+import ohos.global.resource.NotExistException;
+import ohos.global.resource.Resource;
 import ohos.utils.zson.ZSONArray;
 import ohos.utils.zson.ZSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +42,8 @@ public class MainAbilitySlice extends AbilitySlice {
     private TextField tfContent;
     // 发送按钮
     private Button btnSend;
+    // 更多按钮
+    private  Button btnMore;
 
     // 分布式数据库管理器
     private KvManager kvManager;
@@ -78,7 +89,8 @@ public class MainAbilitySlice extends AbilitySlice {
         tfContent.setAdjustInputPanel(true);
         btnSend = (Button) findComponentById(ResourceTable.Id_btn_send);
         btnSend.setEnabled(false);
-
+        btnMore = (Button) findComponentById(ResourceTable.Id_btn_more);
+        btnMore.setEnabled(true);
         // 初始化适配器
         chatProvider = new ChatProvider(mContext, listData);
         lcList.setItemProvider(chatProvider);
@@ -88,15 +100,54 @@ public class MainAbilitySlice extends AbilitySlice {
             btnSend.setEnabled(text.length() != 0);
         });
 
+        // @TODO:模拟一下sender, receiver, 要从数据库中读取
+        String sender = "piggy";
+        String receiver = "zhu";
         // 点击发送按钮
         btnSend.setClickedListener(component -> {
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now();
             String content = tfContent.getText().trim();
-            listData.add(new ChatDataBean(Tools.getDeviceId(mContext), picIndex, content));
+            String content_final = null;
+
+            // @TODO:进行关键词剔除算法
+            try {
+                String encoding = "UTF-8";
+                Resource resource = this.getResourceManager().getResource(ResourceTable.Profile_SensitiveWordList);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource, encoding));
+                String line;
+                ArrayList<String> list = new ArrayList<>(); // 用于拼接读取到的数据
+                while ((line = bufferedReader.readLine()) != null){
+                    list.add(line);
+                }
+                // 释放资源
+                bufferedReader.close();
+                SensitiveWordFilter.loadWord(list);
+                content_final = SensitiveWordFilter.Filter(content);
+                if (content_final == null) content_final = content;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NotExistException e) {
+                e.printStackTrace();
+            }
+            // 更新listData
+            listData.add(new ChatDataBean(Tools.getDeviceId(mContext),
+                    sender, receiver, date, time, picIndex, content_final));
             // 存入数据库中
             singleKvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
             // 清空输入框
             tfContent.setText("");
         });
+
+        // 点击更多按钮
+        btnMore.setClickedListener(this::onClickMore);
+    }
+
+    // @TODO: 跳出更多界面
+    private void onClickMore(Component component) {
+        if (component == (Component) btnMore) {
+            System.out.println("");
+        }
     }
 
     /**
@@ -165,7 +216,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 singleKvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
             }
         }
-
     }
 
     @Override

@@ -12,3 +12,5 @@ public class Tools {
         return KvManagerFactory.getInstance().createKvManager(new KvManagerConfig(mContext)).getLocalDeviceInfo().getId();
     }
 }
+
+
