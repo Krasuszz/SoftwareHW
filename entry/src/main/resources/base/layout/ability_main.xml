@@ -33,6 +33,19 @@
             ohos:weight="1"/>
 
         <Button
+            ohos:id="$+id:btn_more"
+            ohos:height="35vp"
+            ohos:width="35vp"
+            ohos:text="+"
+            ohos:background_element="$graphic:button_more_bg"
+            ohos:text_color="#fff"
+            ohos:text_size="40fp"
+            ohos:bottom_padding="4vp"
+            ohos:text_alignment="center"
+            ohos:left_margin="8vp"
+            />
+
+        <Button
             ohos:id="$+id:btn_send"
             ohos:height="35vp"
             ohos:width="70vp"
