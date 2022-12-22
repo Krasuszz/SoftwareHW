@@ -3,14 +3,19 @@ package com.example.softwarehw.slice;
 import com.example.softwarehw.ResourceTable;
 import com.example.softwarehw.bean.ChatDataBean;
 import com.example.softwarehw.provider.ChatProvider;
+
 import com.example.softwarehw.util.SensitiveWordFilter;
 import com.example.softwarehw.util.Tools;
+
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.IntentParams;
+import ohos.aafwk.content.Operation;
 import ohos.agp.components.Button;
 import ohos.agp.components.Component;
 import ohos.agp.components.ListContainer;
 import ohos.agp.components.TextField;
+import ohos.agp.window.dialog.ToastDialog;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.distributed.common.*;
@@ -48,7 +53,7 @@ public class MainAbilitySlice extends AbilitySlice {
     // 分布式数据库管理器
     private KvManager kvManager;
     // 分布式数据库
-    private SingleKvStore singleKvStore;
+    private SingleKvStore KvStore_chat;
     // 数据库名称
     private static final String STORE_NAME = "ChatStore";
     // 存入的列表数据key
@@ -57,17 +62,25 @@ public class MainAbilitySlice extends AbilitySlice {
     private static final String KEY_PIC_INDEX = "key_pic_index";
     private int picIndex = 0;
 
+    private String user_id = "";
 
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
+        get_info(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
         mContext = this;
         requestPermission();
         initComponent();
         initDatabase();
     }
-
+    void get_info(Intent intent) //  从login页面获取传参：用户id
+    {
+        Operation operation = intent.getOperation();
+        IntentParams intentParams = intent.getParams();
+        user_id = (String)intentParams.getParam("user_id");
+        new ToastDialog(this).setText(user_id).show();
+    }
 
     /**
      * 请求分布式权限
@@ -134,7 +147,7 @@ public class MainAbilitySlice extends AbilitySlice {
             listData.add(new ChatDataBean(Tools.getDeviceId(mContext),
                     sender, receiver, date, time, picIndex, content_final));
             // 存入数据库中
-            singleKvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
+            KvStore_chat.putString(KEY_DATA, ZSONObject.toZSONString(listData));
             // 清空输入框
             tfContent.setText("");
         });
@@ -164,10 +177,10 @@ public class MainAbilitySlice extends AbilitySlice {
                 .setKvStoreType(KvStoreType.SINGLE_VERSION); // 数据库类型
 
         // 创建分布式数据库
-        singleKvStore = kvManager.getKvStore(options, STORE_NAME);
+        KvStore_chat = kvManager.getKvStore(options, STORE_NAME);
 
         // 监听数据库数据改变
-        singleKvStore.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver() {
+        KvStore_chat.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver() {
             @Override
             public void onChange(ChangeNotification changeNotification) {
                 KvStoreObserver.super.onChange(changeNotification);
@@ -204,8 +217,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         try {
-            picIndex = singleKvStore.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
-            singleKvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
+            picIndex = KvStore_chat.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
+            KvStore_chat.putInt(KEY_PIC_INDEX, picIndex + 1);
         }
         catch (KvStoreException e) {
             e.printStackTrace();
@@ -213,7 +226,7 @@ public class MainAbilitySlice extends AbilitySlice {
             // 没有找到，首次进入
             if (e.getKvStoreErrorCode() == KvStoreErrorCode.KEY_NOT_FOUND) {
                 picIndex = 0;
-                singleKvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
+                KvStore_chat.putInt(KEY_PIC_INDEX, picIndex + 1);
             }
         }
     }

@@ -26,11 +26,15 @@
     },
     {
       "name": "LoginWelcome",
-      "value": "Welcome:)Login please"
+      "value": "Welcome:) Login please"
     },
     {
-      "name": "btn_login",
+      "name": "button_login",
       "value": "Login"
+    },
+    {
+      "name": "button_register",
+      "value": "Register"
     }
   ]
 }
