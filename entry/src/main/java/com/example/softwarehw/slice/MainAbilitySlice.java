@@ -1,5 +1,5 @@
 package com.example.softwarehw.slice;
-
+import com.example.softwarehw.MyApplication;
 import com.example.softwarehw.ResourceTable;
 import com.example.softwarehw.bean.ChatDataBean;
 import com.example.softwarehw.provider.ChatProvider;
@@ -50,14 +50,10 @@ public class MainAbilitySlice extends AbilitySlice {
     // 更多按钮
     private  Button btnMore;
 
-    // 分布式数据库管理器
-    private KvManager kvManager;
     // 分布式数据库
-    private SingleKvStore KvStore_chat;
-    // 数据库名称
-    private static final String STORE_NAME = "ChatStore";
+    private SingleKvStore KvStore;
     // 存入的列表数据key
-    private static final String KEY_DATA = "key_data";
+    private static final String KEY_DATA = "chat_data";
     // 存入的头像索引
     private static final String KEY_PIC_INDEX = "key_pic_index";
     private int picIndex = 0;
@@ -70,7 +66,6 @@ public class MainAbilitySlice extends AbilitySlice {
         get_info(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
         mContext = this;
-        requestPermission();
         initComponent();
         initDatabase();
     }
@@ -80,17 +75,6 @@ public class MainAbilitySlice extends AbilitySlice {
         IntentParams intentParams = intent.getParams();
         user_id = (String)intentParams.getParam("user_id");
         new ToastDialog(this).setText(user_id).show();
-    }
-
-    /**
-     * 请求分布式权限
-     */
-    private void requestPermission() {
-        if (verifySelfPermission(DISTRIBUTED_DATASYNC) != IBundleManager.PERMISSION_GRANTED) {
-            if (canRequestPermission(DISTRIBUTED_DATASYNC)) {
-                requestPermissionsFromUser(new String[]{DISTRIBUTED_DATASYNC}, 0);
-            }
-        }
     }
 
     /**
@@ -147,7 +131,7 @@ public class MainAbilitySlice extends AbilitySlice {
             listData.add(new ChatDataBean(Tools.getDeviceId(mContext),
                     sender, receiver, date, time, picIndex, content_final));
             // 存入数据库中
-            KvStore_chat.putString(KEY_DATA, ZSONObject.toZSONString(listData));
+            KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
             // 清空输入框
             tfContent.setText("");
         });
@@ -164,23 +148,14 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
     /**
-     * 初始化分布式数据库
+     * 从MyApplication获取分布式数据库
      */
-    private void initDatabase() {
-        kvManager = KvManagerFactory.getInstance().createKvManager(new KvManagerConfig(this));
-
-        // 数据库配置
-
-        Options options = new Options();
-        options.setCreateIfMissing(true)  // 设置数据库不存在时是否创建
-                .setEncrypt(false)  // 设置是否加密
-                .setKvStoreType(KvStoreType.SINGLE_VERSION); // 数据库类型
-
-        // 创建分布式数据库
-        KvStore_chat = kvManager.getKvStore(options, STORE_NAME);
-
+    private void initDatabase()
+    {
+        KvStore = MyApplication.getInstance().getKvStore();
         // 监听数据库数据改变
-        KvStore_chat.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver() {
+        KvStore.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver()
+        {
             @Override
             public void onChange(ChangeNotification changeNotification) {
                 KvStoreObserver.super.onChange(changeNotification);
@@ -217,8 +192,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         try {
-            picIndex = KvStore_chat.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
-            KvStore_chat.putInt(KEY_PIC_INDEX, picIndex + 1);
+            picIndex = KvStore.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
+            KvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
         }
         catch (KvStoreException e) {
             e.printStackTrace();
@@ -226,10 +201,11 @@ public class MainAbilitySlice extends AbilitySlice {
             // 没有找到，首次进入
             if (e.getKvStoreErrorCode() == KvStoreErrorCode.KEY_NOT_FOUND) {
                 picIndex = 0;
-                KvStore_chat.putInt(KEY_PIC_INDEX, picIndex + 1);
+                KvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
             }
         }
     }
+
 
     @Override
     public void onActive() {
