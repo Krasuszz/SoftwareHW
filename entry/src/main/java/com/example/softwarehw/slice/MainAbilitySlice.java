@@ -22,6 +22,8 @@ import ohos.data.distributed.common.*;
 import ohos.data.distributed.user.SingleKvStore;
 import ohos.global.resource.NotExistException;
 import ohos.global.resource.Resource;
+import ohos.hiviewdfx.HiLog;
+import ohos.hiviewdfx.HiLogLabel;
 import ohos.utils.zson.ZSONArray;
 import ohos.utils.zson.ZSONObject;
 
@@ -49,6 +51,8 @@ public class MainAbilitySlice extends AbilitySlice {
     private Button btnSend;
     // 更多按钮
     private  Button btnMore;
+    // 跳转历史记录
+    private Button btnHirtory;
 
     // 分布式数据库
     private SingleKvStore KvStore;
@@ -59,6 +63,7 @@ public class MainAbilitySlice extends AbilitySlice {
     private int picIndex = 0;
 
     private String user_id = "";
+    static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP, 0x12345, "MainAbilitySlice");
 
     @Override
     public void onStart(Intent intent) {
@@ -88,6 +93,9 @@ public class MainAbilitySlice extends AbilitySlice {
         btnSend.setEnabled(false);
         btnMore = (Button) findComponentById(ResourceTable.Id_btn_more);
         btnMore.setEnabled(true);
+        btnHirtory= (Button) findComponentById(ResourceTable.Id_btn_history);
+        btnHirtory.setEnabled(true);
+        btnHirtory.setClickedListener(this::onClick);
         // 初始化适配器
         chatProvider = new ChatProvider(mContext, listData);
         lcList.setItemProvider(chatProvider);
@@ -98,8 +106,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         // @TODO:模拟一下sender, receiver, 要从数据库中读取
-        String sender = "piggy";
-        String receiver = "zhu";
+        String sender = "admin".equals(user_id)? "piggy":"zhu";
+        String receiver = "admin".equals(user_id)? "zhu":"piggy";
         // 点击发送按钮
         btnSend.setClickedListener(component -> {
             LocalDate date = LocalDate.now();
@@ -129,15 +137,37 @@ public class MainAbilitySlice extends AbilitySlice {
             }
             // 更新listData
             listData.add(new ChatDataBean(Tools.getDeviceId(mContext),
-                    sender, receiver, date, time, picIndex, content_final));
+                    sender, receiver, date+"", time+"", picIndex, content_final));
+            HiLog.info(label, "listData:ok!");
             // 存入数据库中
             KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
+            HiLog.info(label, "listData:ok?"+ ZSONObject.toZSONString(listData));
             // 清空输入框
             tfContent.setText("");
         });
 
         // 点击更多按钮
         btnMore.setClickedListener(this::onClickMore);
+    }
+    public void onClick(Component component)
+    {
+        if(component == btnHirtory)
+        {
+            gotoHistory();
+        }
+    }
+
+    // 跳转函数
+    public void gotoHistory()
+    {
+        Intent intent = new Intent();
+        String listData_str = "";
+        IntentParams intentParams = new IntentParams();
+        listData_str = ZSONObject.toZSONString(listData);
+        intentParams.setParam("listData",listData_str);
+        intent.setParams(intentParams);
+
+        present(new HistoryAbilitySlice(),intent);
     }
 
     // @TODO: 跳出更多界面

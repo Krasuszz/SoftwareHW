@@ -100,19 +100,28 @@ public class LoginAbilitySlice extends AbilitySlice {
             user_id = user_data.get_user_id();
             user_password = user_data.get_user_password();
 
-            if (user_password.equals(input_password)) // 密码正确跳转到主页面
+            if (user_password.equals(input_password)&&!user_data.get_is_online()) // 密码正确跳转到主页面
             {
                 new ToastDialog(this).setText("登录成功").show();
+                user_login(user_id);
                 gotoMain(user_id);
             }
             else
             {
+
                 // 显示TextField错误
                 ShapeElement errorElement = new ShapeElement(this, ResourceTable.Graphic_background_text_field_error);
                 errorElement.setAlpha(120);
                 txt_username.setBackground(errorElement);
                 txt_username.setText("");
-                txt_username.setHint("密码错误");
+                if(user_data.get_is_online())
+                {
+                    txt_username.setHint("该用户已登录");
+                }
+                else
+                {
+                    txt_username.setHint("密码错误");
+                }
                 txt_username.setHintColor(Color.RED);
                 txt_username.setHorizontalPadding(100,20);
                 // TextField失焦
@@ -163,6 +172,7 @@ public class LoginAbilitySlice extends AbilitySlice {
     private UserDataBean find_user(String input_id)
     {
         String tmp_id = "", tmp_password="", tmp_name="";
+        boolean tmp_is_online;
 
         Iterator<UserDataBean> it = listData_login.iterator();
         while (it.hasNext())
@@ -173,7 +183,8 @@ public class LoginAbilitySlice extends AbilitySlice {
             {
                 tmp_password = s.get_user_password();
                 tmp_name = s.get_user_name();
-                return new UserDataBean(tmp_id, tmp_password, tmp_password);
+                tmp_is_online = s.get_is_online();
+                return new UserDataBean(tmp_id, tmp_password, tmp_name, tmp_is_online);
             }
         }
         return null;
@@ -182,7 +193,25 @@ public class LoginAbilitySlice extends AbilitySlice {
     private void add_user(String input_id, String input_password)
     {
         // 更新listData
-        listData_login.add(new UserDataBean(input_id, input_password, "piggy"));
+        listData_login.add(new UserDataBean(input_id, input_password, ("admin".equals(input_id)? "piggy":"zhu"), false));
+        // 存入数据库中
+        KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData_login));
+    }
+    // 数据库改变登录状态
+    private void user_login(String user_id)
+    {
+        String tmp_id;
+        Iterator<UserDataBean> it = listData_login.iterator();
+        while (it.hasNext())
+        {
+            UserDataBean s=it.next();
+            tmp_id = s.get_user_id();
+            if(user_id.equals(tmp_id))
+            {
+                s.set_is_online(true);
+                break;
+            }
+        }
         // 存入数据库中
         KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData_login));
     }

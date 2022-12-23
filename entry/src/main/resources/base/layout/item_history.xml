@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:orientation="vertical">
+
+    <DirectionalLayout
+        ohos:id="$+id:dl_item_history"
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:alignment="top"
+        ohos:left_margin="5vp"
+        ohos:orientation="vertical"
+        ohos:padding="3vp">
+
+        <Text
+            ohos:id="$+id:text_item_hostory_info"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:background_element="$graphic:text_left_bg"
+            ohos:left_margin="7vp"
+            ohos:multiple_lines="true"
+            ohos:padding="0vp"
+            ohos:right_margin="50vp"
+            ohos:text="Piggy->Zhu 2022/12/23 09:23"
+            ohos:text_color="#FF6200EE"
+            ohos:text_size="15fp"
+            />
+        <Text
+            ohos:id="$+id:text_item_hostory_message"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:background_element="$graphic:text_left_bg"
+            ohos:left_margin="7vp"
+            ohos:multiple_lines="true"
+            ohos:padding="0vp"
+            ohos:right_margin="50vp"
+            ohos:text="Hello 你好呀,Hello "
+            ohos:text_color="#000"
+            ohos:text_size="20fp"
+            />
+
+    </DirectionalLayout>
+</DirectionalLayout>

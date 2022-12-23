@@ -53,7 +53,8 @@
             "actions": [
               "action.system.home",
               "action.route_to_main",
-              "action.route_to_login"
+              "action.route_to_login",
+              "action.route_to_history"
             ]
           }
         ],
