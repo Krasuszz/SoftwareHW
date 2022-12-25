@@ -193,7 +193,7 @@ public class LoginAbilitySlice extends AbilitySlice {
     private void add_user(String input_id, String input_password)
     {
         // 更新listData
-        listData_login.add(new UserDataBean(input_id, input_password, ("admin".equals(input_id)? "piggy":"zhu"), false));
+        listData_login.add(new UserDataBean(input_id, input_password, ("admin".equals(input_id)? "piggy":"krasus"), false));
         // 存入数据库中
         KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData_login));
     }
