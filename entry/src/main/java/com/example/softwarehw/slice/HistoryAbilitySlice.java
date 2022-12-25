@@ -125,6 +125,10 @@ public class HistoryAbilitySlice extends AbilitySlice {
             {
                 list.add(new HistoryItem("Item"+ i,send_account + ": " + date +" " + time, content));
             }
+            else if(s.getSend_account().contains(contain))
+            {
+                list.add(new HistoryItem("Item"+ i,send_account + ": " + date +" " + time, content));
+            }
         }
         list_history.clear();
         list_history.addAll(list);

@@ -106,8 +106,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         // @TODO:模拟一下sender, receiver, 要从数据库中读取
-        String sender = "admin".equals(user_id)? "piggy":"zhu";
-        String receiver = "admin".equals(user_id)? "zhu":"piggy";
+        String sender = "admin".equals(user_id)? "piggy":"krasus";
+        String receiver = "admin".equals(user_id)? "krasus":"piggy";
         // 点击发送按钮
         btnSend.setClickedListener(component -> {
             LocalDate date = LocalDate.now();
