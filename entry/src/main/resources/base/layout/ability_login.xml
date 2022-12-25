@@ -1,83 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DependentLayout
+<DirectionalLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
-    ohos:width="match_parent"
     ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:alignment="center"
     ohos:background_element="$media:appbg"
+    ohos:orientation="vertical"
+    ohos:total_weight="1"
     >
 
     <DirectionalLayout
+        ohos:height="0vp"
+        ohos:width="match_parent"
+        ohos:weight="0.45"
+        ohos:horizontal_center="true"
+        ohos:alignment="center"
+        ohos:orientation="vertical"
         ohos:top_margin="70vp"
-        ohos:height="match_content"
-        ohos:id="$+id:frame_container"
-        ohos:layout_alignment="center"
-        ohos:horizontal_center="true"
-        ohos:width="match_content"/>
+        >
+        <DirectionalLayout
+            ohos:id="$+id:frame_container"
+            ohos:height="150vp"
+            ohos:width="150vp"
+            ohos:background_element="$graphic:background_ability_login"
+            />
+    </DirectionalLayout>
 
-    <Text
-        ohos:id="$+id:text"
-        ohos:width="match_content"
-        ohos:height="50fp"
-        ohos:text="$string:LoginWelcome"
-        ohos:text_color="#000000"
-        ohos:horizontal_center="true"
-        ohos:text_size="20fp"
-        ohos:top_margin="10vp"
-        ohos:below="$id:frame_container"
-        ohos:text_alignment="vertical_center"
-
-        />
-
-    <TextField
-        ohos:id="$+id:txt_username"
-        ohos:height="50vp"
+    <DirectionalLayout
+        ohos:height="0vp"
         ohos:width="match_parent"
-        ohos:text="admin"
-        ohos:text_color="#000000"
-        ohos:text_size="19fp"
-        ohos:right_padding="20vp"
-        ohos:left_padding="20vp"
-        ohos:hint="Enter User Name"
-        ohos:vertical_center="true"
-        ohos:center_in_parent="true"
-        ohos:text_alignment="vertical_center"
-        ohos:below="$id:text"
+        ohos:alignment="center"
+        ohos:background_element="$graphic:background_ability_login"
+        ohos:orientation="vertical"
+        ohos:weight="0.45"
         ohos:margin="10vp"
-        ohos:background_element="$graphic:background_text_field"
-        />
-    <TextField
-        ohos:id="$+id:txt_upwd"
-        ohos:height="50vp"
-        ohos:width="match_parent"
-        ohos:text="12345"
-        ohos:text_color="#000000"
-        ohos:text_input_type="pattern_password"
-        ohos:text_size="19fp"
-        ohos:right_padding="20vp"
-        ohos:left_padding="20vp"
-        ohos:center_in_parent="true"
-        ohos:vertical_center="true"
-        ohos:text_alignment="vertical_center"
-        ohos:below="$id:txt_username"
-        ohos:hint="Enter Password"
-        ohos:margin="10vp"
-        ohos:background_element="$graphic:background_text_field"
-        />
+        >
 
-    <Button
-        ohos:id="$+id:btn_login"
-        ohos:width="match_content"
-        ohos:height="match_content"
-        ohos:text="$string:btn_login"
-        ohos:text_size="19fp"
-        ohos:text_color="#FFFFFF"
-        ohos:top_padding="8vp"
-        ohos:bottom_padding="8vp"
-        ohos:right_padding="70vp"
-        ohos:left_padding="70vp"
-        ohos:center_in_parent="true"
-        ohos:below="$id:txt_upwd"
-        ohos:margin="10vp"
-        ohos:background_element="$graphic:background_login_button"
-        />
-</DependentLayout>
+        <Text
+            ohos:id="$+id:text"
+            ohos:height="50fp"
+            ohos:width="match_content"
+            ohos:below="$id:frame_container"
+            ohos:horizontal_center="true"
+            ohos:text="$string:LoginWelcome"
+            ohos:text_alignment="vertical_center"
+            ohos:text_color="#FF4E3C6E"
+            ohos:text_size="20fp"
+            ohos:top_margin="10vp"
+
+            />
+
+        <TextField
+            ohos:id="$+id:txt_username"
+            ohos:height="40vp"
+            ohos:width="match_parent"
+            ohos:background_element="$graphic:background_text_field"
+            ohos:below="$id:text"
+            ohos:center_in_parent="true"
+            ohos:hint="Enter User Name"
+            ohos:left_padding="20vp"
+            ohos:left_margin="10vp"
+            ohos:right_margin="10vp"
+            ohos:right_padding="20vp"
+            ohos:text="admin"
+            ohos:text_alignment="vertical_center"
+            ohos:text_color="#000000"
+            ohos:text_size="19fp"
+            ohos:vertical_center="true"
+            />
+
+        <TextField
+            ohos:id="$+id:txt_upwd"
+            ohos:height="40vp"
+            ohos:width="match_parent"
+            ohos:background_element="$graphic:background_text_field"
+            ohos:below="$id:txt_username"
+            ohos:center_in_parent="true"
+            ohos:hint="Enter Password"
+            ohos:left_padding="20vp"
+            ohos:left_margin="10vp"
+            ohos:right_margin="10vp"
+            ohos:top_margin="10vp"
+            ohos:right_padding="20vp"
+            ohos:text="12345"
+            ohos:text_alignment="vertical_center"
+            ohos:text_color="#000000"
+            ohos:text_input_type="pattern_password"
+            ohos:text_size="19fp"
+            ohos:vertical_center="true"
+            />
+
+
+        <Button
+            ohos:id="$+id:button_signup"
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:background_element="$graphic:background_signup_button"
+            ohos:padding="8vp"
+            ohos:left_margin="10vp"
+            ohos:right_margin="10vp"
+            ohos:top_margin="10vp"
+            ohos:text="$string:button_register"
+
+            ohos:text_color="#FF6200EE"
+            ohos:text_size="19fp"
+            />
+
+        <Button
+            ohos:id="$+id:button_login"
+            ohos:height="match_content"
+            ohos:width="match_parent"
+            ohos:align_parent_end="true"
+            ohos:background_element="$graphic:background_login_button"
+            ohos:padding="8vp"
+            ohos:left_margin="10vp"
+            ohos:right_margin="10vp"
+            ohos:top_margin="10vp"
+            ohos:text="$string:button_login"
+
+            ohos:text_color="#FFFFFF"
+            ohos:text_size="19fp"
+            />
+    </DirectionalLayout>
+</DirectionalLayout>

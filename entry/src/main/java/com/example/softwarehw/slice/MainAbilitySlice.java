@@ -1,22 +1,29 @@
 package com.example.softwarehw.slice;
-
+import com.example.softwarehw.MyApplication;
 import com.example.softwarehw.ResourceTable;
 import com.example.softwarehw.bean.ChatDataBean;
 import com.example.softwarehw.provider.ChatProvider;
+
 import com.example.softwarehw.util.SensitiveWordFilter;
 import com.example.softwarehw.util.Tools;
+
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.IntentParams;
+import ohos.aafwk.content.Operation;
 import ohos.agp.components.Button;
 import ohos.agp.components.Component;
 import ohos.agp.components.ListContainer;
 import ohos.agp.components.TextField;
+import ohos.agp.window.dialog.ToastDialog;
 import ohos.app.Context;
 import ohos.bundle.IBundleManager;
 import ohos.data.distributed.common.*;
 import ohos.data.distributed.user.SingleKvStore;
 import ohos.global.resource.NotExistException;
 import ohos.global.resource.Resource;
+import ohos.hiviewdfx.HiLog;
+import ohos.hiviewdfx.HiLogLabel;
 import ohos.utils.zson.ZSONArray;
 import ohos.utils.zson.ZSONObject;
 
@@ -44,40 +51,35 @@ public class MainAbilitySlice extends AbilitySlice {
     private Button btnSend;
     // 更多按钮
     private  Button btnMore;
+    // 跳转历史记录
+    private Button btnHirtory;
 
-    // 分布式数据库管理器
-    private KvManager kvManager;
     // 分布式数据库
-    private SingleKvStore singleKvStore;
-    // 数据库名称
-    private static final String STORE_NAME = "ChatStore";
+    private SingleKvStore KvStore;
     // 存入的列表数据key
-    private static final String KEY_DATA = "key_data";
+    private static final String KEY_DATA = "chat_data";
     // 存入的头像索引
     private static final String KEY_PIC_INDEX = "key_pic_index";
     private int picIndex = 0;
 
+    private String user_id = "";
+    static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP, 0x12345, "MainAbilitySlice");
 
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
+        get_info(intent);
         super.setUIContent(ResourceTable.Layout_ability_main);
         mContext = this;
-        requestPermission();
         initComponent();
         initDatabase();
     }
-
-
-    /**
-     * 请求分布式权限
-     */
-    private void requestPermission() {
-        if (verifySelfPermission(DISTRIBUTED_DATASYNC) != IBundleManager.PERMISSION_GRANTED) {
-            if (canRequestPermission(DISTRIBUTED_DATASYNC)) {
-                requestPermissionsFromUser(new String[]{DISTRIBUTED_DATASYNC}, 0);
-            }
-        }
+    void get_info(Intent intent) //  从login页面获取传参：用户id
+    {
+        Operation operation = intent.getOperation();
+        IntentParams intentParams = intent.getParams();
+        user_id = (String)intentParams.getParam("user_id");
+        new ToastDialog(this).setText(user_id).show();
     }
 
     /**
@@ -91,6 +93,9 @@ public class MainAbilitySlice extends AbilitySlice {
         btnSend.setEnabled(false);
         btnMore = (Button) findComponentById(ResourceTable.Id_btn_more);
         btnMore.setEnabled(true);
+        btnHirtory= (Button) findComponentById(ResourceTable.Id_btn_history);
+        btnHirtory.setEnabled(true);
+        btnHirtory.setClickedListener(this::onClick);
         // 初始化适配器
         chatProvider = new ChatProvider(mContext, listData);
         lcList.setItemProvider(chatProvider);
@@ -101,8 +106,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         // @TODO:模拟一下sender, receiver, 要从数据库中读取
-        String sender = "piggy";
-        String receiver = "zhu";
+        String sender = "admin".equals(user_id)? "piggy":"zhu";
+        String receiver = "admin".equals(user_id)? "zhu":"piggy";
         // 点击发送按钮
         btnSend.setClickedListener(component -> {
             LocalDate date = LocalDate.now();
@@ -132,15 +137,37 @@ public class MainAbilitySlice extends AbilitySlice {
             }
             // 更新listData
             listData.add(new ChatDataBean(Tools.getDeviceId(mContext),
-                    sender, receiver, date, time, picIndex, content_final));
+                    sender, receiver, date+"", time+"", picIndex, content_final));
+            HiLog.info(label, "listData:ok!");
             // 存入数据库中
-            singleKvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
+            KvStore.putString(KEY_DATA, ZSONObject.toZSONString(listData));
+            HiLog.info(label, "listData:ok?"+ ZSONObject.toZSONString(listData));
             // 清空输入框
             tfContent.setText("");
         });
 
         // 点击更多按钮
         btnMore.setClickedListener(this::onClickMore);
+    }
+    public void onClick(Component component)
+    {
+        if(component == btnHirtory)
+        {
+            gotoHistory();
+        }
+    }
+
+    // 跳转函数
+    public void gotoHistory()
+    {
+        Intent intent = new Intent();
+        String listData_str = "";
+        IntentParams intentParams = new IntentParams();
+        listData_str = ZSONObject.toZSONString(listData);
+        intentParams.setParam("listData",listData_str);
+        intent.setParams(intentParams);
+
+        present(new HistoryAbilitySlice(),intent);
     }
 
     // @TODO: 跳出更多界面
@@ -151,23 +178,14 @@ public class MainAbilitySlice extends AbilitySlice {
     }
 
     /**
-     * 初始化分布式数据库
+     * 从MyApplication获取分布式数据库
      */
-    private void initDatabase() {
-        kvManager = KvManagerFactory.getInstance().createKvManager(new KvManagerConfig(this));
-
-        // 数据库配置
-
-        Options options = new Options();
-        options.setCreateIfMissing(true)  // 设置数据库不存在时是否创建
-                .setEncrypt(false)  // 设置是否加密
-                .setKvStoreType(KvStoreType.SINGLE_VERSION); // 数据库类型
-
-        // 创建分布式数据库
-        singleKvStore = kvManager.getKvStore(options, STORE_NAME);
-
+    private void initDatabase()
+    {
+        KvStore = MyApplication.getInstance().getKvStore();
         // 监听数据库数据改变
-        singleKvStore.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver() {
+        KvStore.subscribe(SubscribeType.SUBSCRIBE_TYPE_ALL, new KvStoreObserver()
+        {
             @Override
             public void onChange(ChangeNotification changeNotification) {
                 KvStoreObserver.super.onChange(changeNotification);
@@ -204,8 +222,8 @@ public class MainAbilitySlice extends AbilitySlice {
         });
 
         try {
-            picIndex = singleKvStore.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
-            singleKvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
+            picIndex = KvStore.getInt(KEY_PIC_INDEX);  // 找到数据库中“key_pic_index”的queries的int值
+            KvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
         }
         catch (KvStoreException e) {
             e.printStackTrace();
@@ -213,10 +231,11 @@ public class MainAbilitySlice extends AbilitySlice {
             // 没有找到，首次进入
             if (e.getKvStoreErrorCode() == KvStoreErrorCode.KEY_NOT_FOUND) {
                 picIndex = 0;
-                singleKvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
+                KvStore.putInt(KEY_PIC_INDEX, picIndex + 1);
             }
         }
     }
+
 
     @Override
     public void onActive() {

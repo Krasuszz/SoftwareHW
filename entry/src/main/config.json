@@ -51,20 +51,13 @@
               "entity.system.home"
             ],
             "actions": [
-              "action.system.home"
+              "action.system.home",
+              "action.route_to_main",
+              "action.route_to_login",
+              "action.route_to_history"
             ]
           }
         ],
-        "name": "com.example.softwarehw.LoginAbility",
-        "description": "$string:loginability_description",
-        "icon": "$media:icon",
-        "label": "$string:entry_LoginAbility",
-        "launchType": "standard",
-        "orientation": "unspecified",
-        "visible": true,
-        "type": "page"
-      },
-      {
         "name": "com.example.softwarehw.MainAbility",
         "description": "$string:mainability_description",
         "icon": "$media:icon",
@@ -74,6 +67,15 @@
         "visible": true,
         "type": "page"
       }
-    ]
+    ],
+    "metaData":{
+      "customizeData":[
+        {
+          "name": "hwc-theme",
+          "value": "androidhwext:style/Theme.Emui.NoTitleBar",
+          "extra":""
+        }
+      ]
+    }
   }
 }
